@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import ReactPlayer from 'react-player';
 import dashjs from 'dashjs';
 
-const DashPlayer = ({ url, ...props }) => {
+const DashPlayer = forwardRef(({ url, ...props }, ref) => {
   const playerRef = useRef(null);
   const dashPlayerRef = useRef(null);
 
@@ -30,6 +30,11 @@ const DashPlayer = ({ url, ...props }) => {
     };
   }, [url]);
 
+  useImperativeHandle(ref, () => ({
+    getCurrentTime: () => playerRef.current?.getCurrentTime() || 0,
+    seekTo: (time) => playerRef.current?.seekTo(time, 'seconds')
+  }));
+
   return (
     <ReactPlayer
       ref={playerRef}
@@ -41,6 +46,6 @@ const DashPlayer = ({ url, ...props }) => {
       {...props}
     />
   );
-};
+});
 
 export default DashPlayer;
